@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+    <title>Intelli-Protect</title>
+  </head>
+
+  <style>
+    body {
+      background-color: #0b406d;
+    }
+    .main {
+      width: 100%;
+      height: 80vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .code-box {
+      min-height: 200px;
+      background-color: white;
+      width: 50%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      border-radius: 20px;
+    }
+    p {
+      color: #fff;
+    }
+    h4 {
+      text-align: center;
+    }
+    img {
+      width: 100%;
+    }
+  </style>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/"> <h1>Intelli Protect</h1> </a>
+      </div>
+    </nav>
+
+    <div class="main">
+      <p>Scan the QR code below</p>
+      <div class="code-box">
+        <div
+          class="spinner-grow text-success loader"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <span class="code-imge"> </span>
+      </div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script type="text/javascript">
+    let loader = document.querySelector(".loader");
+    let codeImg = document.querySelector(".code-imge");
+    let port = 3000;
+    let baseURL = `http://localhost:${port}/api/user`;
+    // check if log in
+    axios.get(baseURL + "/auth").then(res => {
+      auth(res.data);
+    });
+
+    async function auth(arg) {
+      if (!arg.success) {
+        let img = document.createElement("img");
+        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${arg.code}`;
+        codeImg.appendChild(img);
+        loader.style.display = "none";
+      } else {
+        let text = document.createElement("h4");
+        text.innerHTML = "You are protected by Intelli Protect";
+        codeImg.appendChild(text);
+        loader.style.display = "none";
+        let img = document.createElement("img");
+        img.src =
+          "https://coronavirus.ufhealth.org/wordpress/files/2020/05/protect-600x400.png";
+        codeImg.appendChild(img);
+        document.querySelector("p").style.display = "none";
+      }
+    }
+  </script>
+</html>
