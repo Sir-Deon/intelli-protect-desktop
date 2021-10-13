@@ -1,4 +1,2 @@
-
-port = 3000
-baseUrl = f"http://localhost:{port}/api/user"
+baseUrl = "https://intelli-protect.herokuapp.com/api"
 app_port = 5001

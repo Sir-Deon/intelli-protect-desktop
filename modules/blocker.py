@@ -16,16 +16,20 @@ sites_to_unblock = []
 
 
 def commander():
-    # Get sites
-    sites = network.getSites()
-    for site in sites:
-        if(site['blocked'] == True):
-            sites_to_block.append("www." + site['name'])
-            sites_to_block.append(site['name'])
-            block_website()
+    with open('user.txt', 'r') as file:
+        user = file.readlines()
+        if(user[0]):
+            sites = network.getSites(user[0])
+            for site in sites:
+                if(site['blocked'] == True):
+                    sites_to_block.append("www." + site['name'])
+                    sites_to_block.append(site['name'])
+                    block_website()
+                else:
+                    sites_to_unblock.append(site['name'])
+                    unblock_website()
         else:
-            sites_to_unblock.append(site['name'])
-            unblock_website()
+            return
 
 
 def getBlockedSites():

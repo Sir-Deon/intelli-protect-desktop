@@ -77,30 +77,53 @@
   <script type="text/javascript">
     let loader = document.querySelector(".loader");
     let codeImg = document.querySelector(".code-imge");
-    let port = 3000;
-    let baseURL = `http://localhost:${port}/api/user`;
+    let baseURL = `https://intelli-protect.herokuapp.com/api`;
+    let id = localStorage.getItem("id");
     // check if log in
-    axios.get(baseURL + "/auth").then(res => {
-      auth(res.data);
-    });
+    if (id) {
+      axios.get(baseURL + `/check_auth/${id}`).then(res => {
+        if (res.data.success) {
+          localStorage.setItem("userId", res.data.userId);
+          protected();
+        } else {
+          localStorage.removeItem("id");
+          get_code();
+        }
+      });
+    } else {
+      get_code();
+    }
+    function get_code() {
+      axios.get(baseURL + "/get_code").then(res => {
+        auth(res.data);
+      });
+    }
 
-    async function auth(arg) {
-      if (!arg.success) {
-        let img = document.createElement("img");
-        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${arg.code}`;
-        codeImg.appendChild(img);
-        loader.style.display = "none";
-      } else {
-        let text = document.createElement("h4");
-        text.innerHTML = "You are protected by Intelli Protect";
-        codeImg.appendChild(text);
-        loader.style.display = "none";
-        let img = document.createElement("img");
-        img.src =
-          "https://coronavirus.ufhealth.org/wordpress/files/2020/05/protect-600x400.png";
-        codeImg.appendChild(img);
-        document.querySelector("p").style.display = "none";
-      }
+    function protected() {
+      document.querySelector("p").style.display = "none";
+      let text = document.createElement("h4");
+      text.innerHTML = "You are protected by Intelli Protect";
+      codeImg.appendChild(text);
+      loader.style.display = "none";
+      let img = document.createElement("img");
+      img.src =
+        "https://coronavirus.ufhealth.org/wordpress/files/2020/05/protect-600x400.png";
+      codeImg.appendChild(img);
+      axios
+        .post("http://localhost:5001", {
+          userId: localStorage.getItem("userId"),
+        })
+        .then(res => {
+          return;
+        });
+    }
+
+    function auth(arg) {
+      let img = document.createElement("img");
+      img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${arg.code}`;
+      codeImg.appendChild(img);
+      localStorage.setItem("id", arg.code);
+      loader.style.display = "none";
     }
   </script>
 </html>
