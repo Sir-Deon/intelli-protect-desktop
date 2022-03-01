@@ -71,6 +71,10 @@
         </div>
         <span class="code-imge"> </span>
       </div>
+
+      <div class="p-3">
+        <button onClick="reload()" class="btn btn-success">Reload</button>
+      </div>
     </div>
   </body>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -93,13 +97,21 @@
     } else {
       get_code();
     }
+
+    function reload() {
+      axios.get("http://localhost:5001/refresh").then(() => {
+        alert("Sever Reloaded !!");
+      });
+    }
     function get_code() {
+      document.querySelector("button").style.display = "none";
       axios.get(baseURL + "/get_code").then(res => {
         auth(res.data);
       });
     }
 
     function protected() {
+      document.querySelector("button").style.display = "block";
       document.querySelector("p").style.display = "none";
       let text = document.createElement("h4");
       text.innerHTML = "You are protected by Intelli Protect";
